@@ -14,3 +14,4 @@ from .market1501 import Market1501
 from .dukemtmcreid import DukeMTMCreID
 from .university1652 import University1652
 from .tango2000 import Tango2000
+from .soccernetv3 import Soccernetv3
