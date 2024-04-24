@@ -126,7 +126,7 @@ class Engine(object):
         normalize_feature=False,
         visrank=False,
         visrank_topk=10,
-        use_metric_cuhk03=False,
+        eval_metric='default',
         ranks=[1, 5, 10, 20],
         rerank=False
     ):
@@ -154,7 +154,7 @@ class Engine(object):
                 enable ``visrank`` when ``test_only`` is True. The ranked images will be saved to
                 "save_dir/visrank_dataset", e.g. "save_dir/visrank_market1501".
             visrank_topk (int, optional): top-k ranked images to be visualized. Default is 10.
-            use_metric_cuhk03 (bool, optional): use single-gallery-shot setting for cuhk03.
+            eval_metric (bool, optional): use single-gallery-shot setting for cuhk03.
                 Default is False. This should be enabled when using cuhk03 classic split.
             ranks (list, optional): cmc ranks to be computed. Default is [1, 5, 10, 20].
             rerank (bool, optional): uses person re-ranking (by Zhong et al. CVPR'17).
@@ -173,7 +173,7 @@ class Engine(object):
                 visrank=visrank,
                 visrank_topk=visrank_topk,
                 save_dir=save_dir,
-                use_metric_cuhk03=use_metric_cuhk03,
+                eval_metric=eval_metric,
                 ranks=ranks,
                 rerank=rerank
             )
@@ -204,7 +204,7 @@ class Engine(object):
                     visrank=visrank,
                     visrank_topk=visrank_topk,
                     save_dir=save_dir,
-                    use_metric_cuhk03=use_metric_cuhk03,
+                    eval_metric=eval_metric,
                     ranks=ranks
                 )
                 self.save_model(self.epoch, rank1, save_dir)
@@ -217,7 +217,7 @@ class Engine(object):
                 visrank=visrank,
                 visrank_topk=visrank_topk,
                 save_dir=save_dir,
-                use_metric_cuhk03=use_metric_cuhk03,
+                eval_metric=eval_metric,
                 ranks=ranks
             )
             self.save_model(self.epoch, rank1, save_dir)
@@ -297,7 +297,7 @@ class Engine(object):
         visrank=False,
         visrank_topk=10,
         save_dir='',
-        use_metric_cuhk03=False,
+        eval_metric='default',
         ranks=[1, 5, 10, 20],
         rerank=False
     ):
@@ -331,7 +331,7 @@ class Engine(object):
                 visrank=visrank,
                 visrank_topk=visrank_topk,
                 save_dir=save_dir,
-                use_metric_cuhk03=use_metric_cuhk03,
+                eval_metric=eval_metric,
                 ranks=ranks,
                 rerank=rerank
             )
@@ -353,7 +353,7 @@ class Engine(object):
         visrank=False,
         visrank_topk=10,
         save_dir='',
-        use_metric_cuhk03=False,
+        eval_metric='default',
         ranks=[1, 5, 10, 20],
         rerank=False
     ):
@@ -370,8 +370,10 @@ class Engine(object):
                 batch_time.update(time.time() - end)
                 features = features.cpu()
                 f_.append(features)
-                pids_.extend(pids.tolist())
-                camids_.extend(camids.tolist())
+                if type(pids_) != list:
+                    pids_.extend(pids.tolist())
+                if type(camids_) != list:
+                    camids_.extend(camids.tolist())
             f_ = torch.cat(f_, 0)
             pids_ = np.asarray(pids_)
             camids_ = np.asarray(camids_)
@@ -414,7 +416,7 @@ class Engine(object):
             g_pids,
             q_camids,
             g_camids,
-            use_metric_cuhk03=use_metric_cuhk03
+            eval_metric=eval_metric
         )
 
         print('** Results **')
