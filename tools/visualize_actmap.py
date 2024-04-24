@@ -17,9 +17,7 @@ from torchreid.utils import (
     check_isfile, mkdir_if_missing, load_pretrained_weights
 )
 
-IMAGENET_MEAN = [0.485, 0.456, 0.406]
-IMAGENET_STD = [0.229, 0.224, 0.225]
-GRID_SPACING = 10
+
 
 
 @torch.no_grad()
@@ -33,6 +31,7 @@ def visactmap(
     img_mean=None,
     img_std=None
 ):
+    GRID_SPACING = 10
     if img_mean is None or img_std is None:
         # use imagenet mean and std
         img_mean = IMAGENET_MEAN
@@ -170,4 +169,7 @@ def main():
 
 
 if __name__ == '__main__':
+    IMAGENET_MEAN = [0.485, 0.456, 0.406]
+    IMAGENET_STD = [0.229, 0.224, 0.225]
+    GRID_SPACING = 10
     main()

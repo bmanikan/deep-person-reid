@@ -27,6 +27,8 @@ cpdef evaluate_cy(distmat, q_pids, g_pids, q_camids, g_camids, max_rank, use_met
     distmat = np.asarray(distmat, dtype=np.float32)
     q_pids = np.asarray(q_pids, dtype=np.int64)
     g_pids = np.asarray(g_pids, dtype=np.int64)
+    print(len(q_pids))
+    print(len(g_pids))
     q_camids = np.asarray(q_camids, dtype=np.int64)
     g_camids = np.asarray(g_camids, dtype=np.int64)
     if use_metric_cuhk03:

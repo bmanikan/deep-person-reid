@@ -21,6 +21,8 @@ from .resnet_ibn_a import *
 from .resnet_ibn_b import *
 from .shufflenetv2 import *
 from .inceptionresnetv2 import *
+from .tangoSwinTransformer import *
+from .lightMBN import *
 
 __model_factory = {
     # image classification models
@@ -74,7 +76,10 @@ __model_factory = {
     'osnet_ain_x1_0': osnet_ain_x1_0,
     'osnet_ain_x0_75': osnet_ain_x0_75,
     'osnet_ain_x0_5': osnet_ain_x0_5,
-    'osnet_ain_x0_25': osnet_ain_x0_25
+    'osnet_ain_x0_25': osnet_ain_x0_25,
+    # Experimentation
+    'tangoSwinTransformer':TangoSwinTransformer21,
+    'lightMBN':lightMBN 
 }
 
 

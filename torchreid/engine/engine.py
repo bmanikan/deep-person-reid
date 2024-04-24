@@ -7,6 +7,7 @@ from collections import OrderedDict
 import torch
 from torch.nn import functional as F
 from torch.utils.tensorboard import SummaryWriter
+from tqdm import tqdm
 
 from torchreid import metrics
 from torchreid.utils import (
@@ -360,7 +361,7 @@ class Engine(object):
 
         def _feature_extraction(data_loader):
             f_, pids_, camids_ = [], [], []
-            for batch_idx, data in enumerate(data_loader):
+            for batch_idx, data in enumerate(tqdm(data_loader)):
                 imgs, pids, camids = self.parse_data_for_eval(data)
                 if self.use_gpu:
                     imgs = imgs.cuda()
@@ -374,6 +375,8 @@ class Engine(object):
             f_ = torch.cat(f_, 0)
             pids_ = np.asarray(pids_)
             camids_ = np.asarray(camids_)
+            if f_.dim() == 3:
+                f_ = f_.view(f_.size(0), -1)
             return f_, pids_, camids_
 
         print('Extracting features from query set ...')
@@ -390,6 +393,7 @@ class Engine(object):
             print('Normalzing features with L2 norm ...')
             qf = F.normalize(qf, p=2, dim=1)
             gf = F.normalize(gf, p=2, dim=1)
+        
 
         print(
             'Computing distance matrix with metric={} ...'.format(dist_metric)

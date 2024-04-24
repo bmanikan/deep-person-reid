@@ -21,7 +21,7 @@ class Market1501(ImageDataset):
     """
     _junk_pids = [0, -1]
     dataset_dir = 'market1501'
-    dataset_url = 'http://188.138.127.15:81/Datasets/Market-1501-v15.09.15.zip'
+    dataset_url = 'https://drive.usercontent.google.com/download?id=0B8-rUzbwVRk0c054eEozWG9COHM&export=download&authuser=0&resourcekey=0-8nyl7K9_x37HlQm34MmrYQ&confirm=t&uuid=5b923188-317f-47f1-a3f4-2ce1a102d6bc&at=APZUnTXqV4FGZOVgP-vHkYQXoYhy%3A1713081319636'
 
     def __init__(self, root='', market1501_500k=False, **kwargs):
         self.root = osp.abspath(osp.expanduser(root))
@@ -74,8 +74,10 @@ class Market1501(ImageDataset):
         pid2label = {pid: label for label, pid in enumerate(pid_container)}
 
         data = []
+        pids = set()
         for img_path in img_paths:
             pid, camid = map(int, pattern.search(img_path).groups())
+            pids.add(pid)
             if pid == -1:
                 continue # junk images are just ignored
             assert 0 <= pid <= 1501 # pid == 0 means background
@@ -84,5 +86,4 @@ class Market1501(ImageDataset):
             if relabel:
                 pid = pid2label[pid]
             data.append((img_path, pid, camid))
-
         return data
