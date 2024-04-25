@@ -171,6 +171,7 @@ def eval_market1501(distmat, q_pids, g_pids, q_camids, g_camids, max_rank):
         )
 
     indices = np.argsort(distmat, axis=1)
+    print(g_pids, type(g_pids), 11054 in g_pids)
     matches = (g_pids[indices] == q_pids[:, np.newaxis]).astype(np.int32)
 
     # compute cmc curve for each query

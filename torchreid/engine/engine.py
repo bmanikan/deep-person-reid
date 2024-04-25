@@ -370,10 +370,8 @@ class Engine(object):
                 batch_time.update(time.time() - end)
                 features = features.cpu()
                 f_.append(features)
-                if type(pids_) != list:
-                    pids_.extend(pids.tolist())
-                if type(camids_) != list:
-                    camids_.extend(camids.tolist())
+                pids_.extend(pids)
+                camids_.extend(camids)
             f_ = torch.cat(f_, 0)
             pids_ = np.asarray(pids_)
             camids_ = np.asarray(camids_)
