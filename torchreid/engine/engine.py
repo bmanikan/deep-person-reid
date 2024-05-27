@@ -15,6 +15,8 @@ from torchreid.utils import (
     open_specified_layers, visualize_ranked_results
 )
 from torchreid.losses import DeepSupervision
+from tqdm import tqdm
+
 
 
 class Engine(object):
@@ -187,7 +189,7 @@ class Engine(object):
         self.max_epoch = max_epoch
         print('=> Start training')
 
-        for self.epoch in range(self.start_epoch, self.max_epoch):
+        for self.epoch in tqdm(range(self.start_epoch, self.max_epoch)):
             self.train(
                 print_freq=print_freq,
                 fixbase_epoch=fixbase_epoch,
@@ -241,7 +243,7 @@ class Engine(object):
 
         self.num_batches = len(self.train_loader)
         end = time.time()
-        for self.batch_idx, data in enumerate(self.train_loader):
+        for self.batch_idx, data in enumerate(tqdm(self.train_loader)):
             data_time.update(time.time() - end)
             loss_summary = self.forward_backward(data)
             batch_time.update(time.time() - end)
