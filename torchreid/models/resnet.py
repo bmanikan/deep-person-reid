@@ -4,6 +4,7 @@ Code source: https://github.com/pytorch/vision
 from __future__ import division, absolute_import
 import torch.utils.model_zoo as model_zoo
 from torch import nn
+from .layers import GeM
 
 __all__ = [
     'resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152',
@@ -214,6 +215,12 @@ class ResNet(nn.Module):
         self.bn1 = norm_layer(self.inplanes)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
+
+        #added for GEM pooling
+        self.custom_pool = None
+        if kwargs.get('pooling', None) == 'gem':
+            self.custom_pool = GeM()
+
         self.layer1 = self._make_layer(block, 64, layers[0])
         self.layer2 = self._make_layer(
             block,
@@ -352,7 +359,10 @@ class ResNet(nn.Module):
 
     def forward(self, x):
         f = self.featuremaps(x)
-        v = self.global_avgpool(f)
+        if self.custom_pool is not None:
+            v = self.custom_pool(f)
+        else:
+            v = self.global_avgpool(f)
         v = v.view(v.size(0), -1)
 
         if self.fc is not None:
