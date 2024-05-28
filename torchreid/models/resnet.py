@@ -4,7 +4,7 @@ Code source: https://github.com/pytorch/vision
 from __future__ import division, absolute_import
 import torch.utils.model_zoo as model_zoo
 from torch import nn
-from .layers import GeM
+from .layers import GeM, ArcMarginProduct
 
 __all__ = [
     'resnet18', 'resnet34', 'resnet50', 'resnet101', 'resnet152',
@@ -248,6 +248,11 @@ class ResNet(nn.Module):
             fc_dims, 512 * block.expansion, dropout_p
         )
         self.classifier = nn.Linear(self.feature_dim, num_classes)
+        #added for ArcFaceMarginProduct
+        if 'ArcFaceMarginProduct' in kwargs.get('custom_layers', []):
+            self.classifier = ArcMarginProduct(in_features=self.feature_dim,
+                                               out_features=num_classes)
+
 
         self._init_params()
 
@@ -357,12 +362,14 @@ class ResNet(nn.Module):
         x = self.layer4(x)
         return x
 
-    def forward(self, x):
+    def forward(self, x, labels=None):
         f = self.featuremaps(x)
+
         if self.custom_pool is not None:
             v = self.custom_pool(f)
         else:
             v = self.global_avgpool(f)
+
         v = v.view(v.size(0), -1)
 
         if self.fc is not None:
@@ -371,7 +378,11 @@ class ResNet(nn.Module):
         if not self.training:
             return v
 
-        y = self.classifier(v)
+        if isinstance(self.classifier, ArcMarginProduct):
+            assert labels is not None, "labels are needed for ArcMarginProduct calculation"
+            y = self.classifier(v,labels)
+        else:
+            y = self.classifier(v)
 
         if self.loss == 'softmax':
             return y

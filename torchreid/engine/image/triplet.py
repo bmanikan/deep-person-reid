@@ -96,8 +96,10 @@ class ImageTripletEngine(Engine):
         if self.use_gpu:
             imgs = imgs.cuda()
             pids = pids.cuda()
-
-        outputs, features = self.model(imgs)
+            
+        #only works for resnet model as of now : added pids to accomodate changes for ArcMarginProduct layer
+        # probably add labels=None for all the models or migrate to ArcMarginProduct implementation similar to resnet.py
+        outputs, features = self.model(imgs, pids)
 
         loss = 0
         loss_summary = {}
