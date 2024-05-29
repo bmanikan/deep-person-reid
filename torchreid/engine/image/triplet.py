@@ -107,18 +107,18 @@ class ImageTripletEngine(Engine):
         if self.weight_t > 0:
             loss_t = self.compute_loss(self.criterion_t, features, pids)
             loss += self.weight_t * loss_t
-            loss_summary['loss_t'] = loss_t.item()
+            loss_summary['loss_t'] = loss_t.item() # type: ignore
 
         if self.weight_x > 0:
             loss_x = self.compute_loss(self.criterion_x, outputs, pids)
             loss += self.weight_x * loss_x
-            loss_summary['loss_x'] = loss_x.item()
+            loss_summary['loss_x'] = loss_x.item() # type: ignore
             loss_summary['acc'] = metrics.accuracy(outputs, pids)[0].item()
 
         assert loss_summary
 
         self.optimizer.zero_grad()
-        loss.backward()
+        loss.backward() # type: ignore
         self.optimizer.step()
 
         return loss_summary

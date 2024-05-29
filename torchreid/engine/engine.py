@@ -243,7 +243,7 @@ class Engine(object):
 
         self.num_batches = len(self.train_loader)
         end = time.time()
-        for self.batch_idx, data in enumerate(tqdm(self.train_loader)):
+        for self.batch_idx, data in enumerate(self.train_loader):
             data_time.update(time.time() - end)
             loss_summary = self.forward_backward(data)
             batch_time.update(time.time() - end)
@@ -363,7 +363,7 @@ class Engine(object):
 
         def _feature_extraction(data_loader):
             f_, pids_, camids_ = [], [], []
-            for batch_idx, data in enumerate(tqdm(data_loader)):
+            for batch_idx, data in enumerate(data_loader):
                 imgs, pids, camids = self.parse_data_for_eval(data)
                 if self.use_gpu:
                     imgs = imgs.cuda()
