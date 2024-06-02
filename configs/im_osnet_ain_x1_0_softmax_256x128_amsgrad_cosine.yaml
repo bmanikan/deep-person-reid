@@ -4,10 +4,12 @@ model:
 
 data:
   type: 'image'
+  root: 'reid-data'
   sources: ['market1501']
   targets: ['market1501', 'dukemtmcreid']
   height: 256
   width: 128
+  batch_size: 128
   combineall: False
   transforms: ['random_flip', 'color_jitter']
   save_dir: 'log/osnet_ain_x1_0_market1501_softmax_cosinelr'
@@ -33,3 +35,7 @@ test:
   evaluate: False
   eval_freq: -1
   rerank: False
+
+wandb:
+  project: "REID-V3"
+  entity: "tangoeye"

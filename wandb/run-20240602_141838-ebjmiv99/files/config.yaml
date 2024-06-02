@@ -1,0 +1,88 @@
+wandb_version: 1
+
+model:
+  desc: null
+  value:
+    name: osnet_ain_x1_0
+    pretrained: true
+data:
+  desc: null
+  value:
+    type: image
+    sources:
+    - market1501
+    targets:
+    - market1501
+    - dukemtmcreid
+    height: 256
+    width: 128
+    combineall: false
+    transforms:
+    - random_flip
+    - color_jitter
+    save_dir: log/osnet_ain_x1_0_market1501_softmax_cosinelr
+loss:
+  desc: null
+  value:
+    name: softmax
+    softmax:
+      label_smooth: true
+train:
+  desc: null
+  value:
+    optim: amsgrad
+    lr: 0.0015
+    max_epoch: 100
+    batch_size: 64
+    fixbase_epoch: 10
+    open_layers:
+    - classifier
+    lr_scheduler: cosine
+test:
+  desc: null
+  value:
+    batch_size: 300
+    dist_metric: cosine
+    normalize_feature: false
+    evaluate: false
+    eval_freq: -1
+    rerank: false
+wandb:
+  desc: null
+  value:
+    project: REID-V3
+    entity: tangoeye
+_wandb:
+  desc: null
+  value:
+    python_version: 3.10.14
+    cli_version: 0.17.0
+    framework: torch
+    is_jupyter_run: true
+    is_kaggle_kernel: false
+    start_time: 1717318118
+    t:
+      1:
+      - 1
+      - 41
+      - 49
+      - 55
+      - 63
+      - 105
+      2:
+      - 1
+      - 41
+      - 49
+      - 55
+      - 63
+      - 105
+      3:
+      - 2
+      - 16
+      - 23
+      4: 3.10.14
+      5: 0.17.0
+      8:
+      - 1
+      - 5
+      13: linux-x86_64

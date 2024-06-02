@@ -6,8 +6,7 @@ import datetime
 from collections import OrderedDict
 import torch
 from torch.nn import functional as F
-from torch.utils.tensorboard import SummaryWriter
-from tqdm import tqdm
+from torch.utils.tensorboard.writer import SummaryWriter
 
 from torchreid import metrics
 from torchreid.utils import (
@@ -15,7 +14,6 @@ from torchreid.utils import (
     open_specified_layers, visualize_ranked_results
 )
 from torchreid.losses import DeepSupervision
-from tqdm import tqdm
 
 
 
@@ -189,7 +187,7 @@ class Engine(object):
         self.max_epoch = max_epoch
         print('=> Start training')
 
-        for self.epoch in tqdm(range(self.start_epoch, self.max_epoch)):
+        for self.epoch in range(self.start_epoch, self.max_epoch):
             self.train(
                 print_freq=print_freq,
                 fixbase_epoch=fixbase_epoch,
@@ -368,7 +366,7 @@ class Engine(object):
                 if self.use_gpu:
                     imgs = imgs.cuda()
                 end = time.time()
-                features = self.extract_features(imgs)
+                features = self.extract_features(imgs,pids)
                 batch_time.update(time.time() - end)
                 features = features.cpu()
                 f_.append(features)
@@ -445,8 +443,8 @@ class Engine(object):
             loss = criterion(outputs, targets)
         return loss
 
-    def extract_features(self, input):
-        return self.model(input)
+    def extract_features(self, input, pids):
+        return self.model(input, pids) # type: ignore
 
     def parse_data_for_train(self, data):
         imgs = data['img']
