@@ -1,7 +1,6 @@
 model:
   name: 'resnet50'
   pretrained: True
-  final_pooling: 'gem'
 
 data:
   type: 'image'
@@ -36,14 +35,6 @@ test:
   evaluate: False
   eval_freq: -1
   rerank: False
-
-custom:
-  custom_layers:
-    # ArcFaceMarginProduct:
-    #   s: 30.0
-    #   m: 0.50
-    #   easy_margin: False
-    #   ls_eps: 0.0
 
 wandb:
   project: "REID-V3"

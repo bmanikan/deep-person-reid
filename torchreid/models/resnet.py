@@ -250,8 +250,12 @@ class ResNet(nn.Module):
         self.classifier = nn.Linear(self.feature_dim, num_classes)
         #added for ArcFaceMarginProduct
         if 'ArcFaceMarginProduct' in kwargs.get('custom_layers', []):
-            self.classifier = ArcMarginProduct(in_features=self.feature_dim,
-                                               out_features=num_classes)
+            self.classifier = ArcMarginProduct(in_features  = self.feature_dim,
+                                               out_features = num_classes,
+                                               s            = kwargs['custom_layers']['ArcFaceMarginProduct'].get('s',30.0),
+                                               m            = kwargs['custom_layers']['ArcFaceMarginProduct'].get('m',0.5),
+                                               easy_margin  = kwargs['custom_layers']['ArcFaceMarginProduct'].get('easy_margin',False),
+                                               ls_eps       = kwargs['custom_layers']['ArcFaceMarginProduct'].get('ls_eps',0.0))
 
 
         self._init_params()

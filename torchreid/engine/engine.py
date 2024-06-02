@@ -26,12 +26,13 @@ class Engine(object):
         use_gpu (bool, optional): use gpu. Default is True.
     """
 
-    def __init__(self, datamanager, use_gpu=True):
+    def __init__(self, datamanager, use_gpu=True, logger=None):
         self.datamanager = datamanager
         self.train_loader = self.datamanager.train_loader
         self.test_loader = self.datamanager.test_loader
         self.use_gpu = (torch.cuda.is_available() and use_gpu)
         self.writer = None
+        self.logger = logger
         self.epoch = 0
 
         self.model = None
@@ -76,6 +77,9 @@ class Engine(object):
     def save_model(self, epoch, rank1, save_dir, is_best=False):
         names = self.get_model_names()
 
+        if self.logger is not None:
+            self.logger.log({'model_saved_at_epoch': epoch})
+
         for name in names:
             save_checkpoint(
                 {
@@ -102,7 +106,10 @@ class Engine(object):
     def get_current_lr(self, names=None):
         names = self.get_model_names(names)
         name = names[0]
-        return self._optims[name].param_groups[-1]['lr']
+        current_lr = self._optims[name].param_groups[-1]['lr']
+        if self.logger is not None:
+            self.logger.log({'learning_rate':current_lr})
+        return current_lr
 
     def update_lr(self, names=None):
         names = self.get_model_names(names)
@@ -128,7 +135,8 @@ class Engine(object):
         visrank_topk=10,
         eval_metric='default',
         ranks=[1, 5, 10, 20],
-        rerank=False
+        rerank=False,
+        
     ):
         r"""A unified pipeline for training and evaluating a model.
 
@@ -188,6 +196,10 @@ class Engine(object):
         print('=> Start training')
 
         for self.epoch in range(self.start_epoch, self.max_epoch):
+            
+            if self.logger is not None:
+                self.logger.log({'epoch':self.epoch})
+
             self.train(
                 print_freq=print_freq,
                 fixbase_epoch=fixbase_epoch,
@@ -273,6 +285,13 @@ class Engine(object):
                     )
                 )
 
+            if self.logger is not None:
+                self.logger.log({
+                    'Train/time' : batch_time,
+                    'Train/data' : data_time,
+                })
+                self.logger.log(loss_summary)
+
             if self.writer is not None:
                 n_iter = self.epoch * self.num_batches + self.batch_idx
                 self.writer.add_scalar('Train/time', batch_time.avg, n_iter)
@@ -335,6 +354,7 @@ class Engine(object):
                 ranks=ranks,
                 rerank=rerank
             )
+
 
             if self.writer is not None:
                 self.writer.add_scalar(f'Test/{name}/rank1', rank1, self.epoch)
@@ -416,6 +436,10 @@ class Engine(object):
             g_camids,
             eval_metric=eval_metric
         )
+
+        if self.logger is not None:
+            self.logger.log({'mAP':mAP})
+            self.logger.log({'rank_1':cmc[0]})
 
         print('** Results **')
         print('mAP: {:.1%}'.format(mAP))
