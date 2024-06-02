@@ -38,7 +38,7 @@ test:
   rerank: False
 
 custom:
-  custom_layers:
+  custom_layers: []
     # ArcFaceMarginProduct:
     #   s: 30.0
     #   m: 0.50

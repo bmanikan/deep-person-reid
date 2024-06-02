@@ -287,8 +287,8 @@ class Engine(object):
 
             if self.logger is not None:
                 self.logger.log({
-                    'Train/time' : batch_time,
-                    'Train/data' : data_time,
+                    'train_time' : batch_time.avg,
+                    'data_time' : data_time.avg,
                 })
                 self.logger.log(loss_summary)
 
