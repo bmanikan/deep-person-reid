@@ -216,11 +216,6 @@ class ResNet(nn.Module):
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
 
-        #added for GEM pooling
-        self.custom_pool = None
-        if kwargs.get('pooling', None) == 'gem':
-            self.custom_pool = GeM()
-
         self.layer1 = self._make_layer(block, 64, layers[0])
         self.layer2 = self._make_layer(
             block,
@@ -243,7 +238,14 @@ class ResNet(nn.Module):
             stride=last_stride,
             dilate=replace_stride_with_dilation[2]
         )
-        self.global_avgpool = nn.AdaptiveAvgPool2d((1, 1))
+
+        #added for GEM pooling
+        if kwargs.get('pooling', None) == 'gem':
+            print('gem')
+            self.pool = GeM()
+        else:
+            self.pool = nn.AdaptiveAvgPool2d((1, 1))
+        
         self.fc = self._construct_fc_layer(
             fc_dims, 512 * block.expansion, dropout_p
         )
@@ -369,10 +371,7 @@ class ResNet(nn.Module):
     def forward(self, x, labels=None):
         f = self.featuremaps(x)
 
-        if self.custom_pool is not None:
-            v = self.custom_pool(f)
-        else:
-            v = self.global_avgpool(f)
+        v = self.pool(f)
 
         v = v.view(v.size(0), -1)
 
