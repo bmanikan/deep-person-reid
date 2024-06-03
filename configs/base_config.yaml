@@ -1,6 +1,7 @@
 model:
   name: 'resnet50'
   pretrained: True
+  final_pooling: 'gem'
 
 data:
   type: 'image'
@@ -11,8 +12,8 @@ data:
   width: 128
   batch_size: 128
   combineall: False
-  transforms: ['random_flip', 'color_jitter']
-  save_dir: 'log/osnet_ain_x1_0_market1501_softmax_cosinelr'
+  transforms: ['random_flip', 'random_crop']
+  save_dir: 'log/resnet50_market1501_softmax'
 
 loss:
   name: 'softmax'
@@ -23,7 +24,6 @@ train:
   optim: 'amsgrad'
   lr: 0.0015
   max_epoch: 100
-  batch_size: 64
   fixbase_epoch: 10
   open_layers: ['classifier']
   lr_scheduler: 'cosine'
@@ -35,6 +35,14 @@ test:
   evaluate: False
   eval_freq: -1
   rerank: False
+
+custom:
+  custom_layers: []
+    # ArcFaceMarginProduct:
+    #   s: 30.0
+    #   m: 0.50
+    #   easy_margin: False
+    #   ls_eps: 0.0
 
 wandb:
   project: "REID-V3"
