@@ -307,6 +307,8 @@ class Engine(object):
 
             end = time.time()
 
+        self.update_lr(self.mAP)
+
 
     def forward_backward(self, data):
         raise NotImplementedError
@@ -460,7 +462,7 @@ class Engine(object):
                 topk=visrank_topk
             )
 
-        self.update_lr(mAP)
+        self.mAP = mAP
 
         return cmc[0], mAP
 
