@@ -27,7 +27,7 @@ train:
   fixbase_epoch: 10
   open_layers: ['classifier']
   lr_scheduler: 
-    name: 'single_step'
+    name: 'lr_on_plateau'
     stepsize: 20
     gamma: 0.1
     max_epoch: 1

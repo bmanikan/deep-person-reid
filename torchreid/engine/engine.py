@@ -111,12 +111,15 @@ class Engine(object):
             self.logger.log({'learning_rate':current_lr})
         return current_lr
 
-    def update_lr(self, names=None):
+    def update_lr(self, mAP, names=None):
         names = self.get_model_names(names)
 
         for name in names:
             if self._scheds[name] is not None:
-                self._scheds[name].step()
+                if isinstance(self._scheds[name], torch.optim.lr_scheduler.ReduceLROnPlateau):
+                    self._scheds[name].step(mAP)
+                else:
+                    self._scheds[name].step()
 
     def run(
         self,
@@ -304,7 +307,6 @@ class Engine(object):
 
             end = time.time()
 
-        self.update_lr()
 
     def forward_backward(self, data):
         raise NotImplementedError
@@ -457,6 +459,8 @@ class Engine(object):
                 save_dir=osp.join(save_dir, 'visrank_' + dataset_name),
                 topk=visrank_topk
             )
+
+        self.update_lr(mAP)
 
         return cmc[0], mAP
 

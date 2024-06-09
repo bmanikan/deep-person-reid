@@ -1,7 +1,7 @@
 from __future__ import print_function, absolute_import
 import torch
 
-AVAI_SCH = ['single_step', 'multi_step', 'cosine', 'cosine_warm']
+AVAI_SCH = ['single_step', 'multi_step', 'cosine', 'cosine_warm', 'lr_on_plateau']
 
 
 def build_lr_scheduler(
@@ -66,7 +66,10 @@ def build_lr_scheduler(
         )
 
     elif name == 'cosine_warm':
-        scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer,T_0= kwargs.get('T_0', 5),
+        scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(optimizer,T_0= kwargs.get('T_0', 1),
                                                                          eta_min=kwargs.get('eta_min', 1e-6))
+        
+    elif name == "lr_on_plateau":
+        scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, 'max', patience=0, verbose=True)
 
     return scheduler

@@ -5,3 +5,4 @@ This file contains the changes made to this repo with datestamp and additional d
     * ArcFaceMargin Product
     * GeM pooling
 
+* "Triplet" loss is giving more mAP than "softmax" loss
