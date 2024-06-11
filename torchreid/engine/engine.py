@@ -34,6 +34,7 @@ class Engine(object):
         self.writer = None
         self.logger = logger
         self.epoch = 0
+        self.mAP = 0
 
         self.model = None
         self.optimizer = None

@@ -29,9 +29,12 @@ class ProxyAnchorLoss(nn.Module):
         self.embedding_dim = embedding_dim
         self.margin = margin
         self.alpha = alpha
-        self.proxies = nn.Parameter(torch.randn(num_classes, embedding_dim))
+        
         if use_gpu:
-            self.proxies = self.proxies.cuda()
+            self.proxies = nn.Parameter(torch.randn(num_classes, embedding_dim).cuda())
+        else:
+            self.proxies = nn.Parameter(torch.randn(num_classes, embedding_dim))
+
         nn.init.kaiming_normal_(self.proxies, mode='fan_out')
         
     def forward(self, embeddings, labels):

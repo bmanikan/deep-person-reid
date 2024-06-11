@@ -4,9 +4,10 @@ from torchreid import metrics
 from torchreid.losses import ProxyAnchorLoss
 
 from ..engine import Engine
+import torch
 
 
-class ProxyAwareSoftmaxEngine(Engine):
+class ProxyAwareEngine(Engine):
     r"""Proxy Aware loss engine for image-reid.
 
     Args:
@@ -64,7 +65,7 @@ class ProxyAwareSoftmaxEngine(Engine):
         alpha=32,
         logger=None
     ):
-        super(ProxyAwareSoftmaxEngine, self).__init__(datamanager, use_gpu, logger)
+        super(ProxyAwareEngine, self).__init__(datamanager, use_gpu, logger)
 
         self.model = model
         self.optimizer = optimizer
@@ -87,8 +88,8 @@ class ProxyAwareSoftmaxEngine(Engine):
             imgs = imgs.cuda()
             pids = pids.cuda()
 
-        outputs = self.model(imgs, pids)
-        loss = self.compute_loss(self.criterion, outputs, pids)
+        outputs, features = self.model(imgs, pids)
+        loss = self.compute_loss(self.criterion, features, pids)
 
         self.optimizer.zero_grad()
         loss.backward()
@@ -98,5 +99,6 @@ class ProxyAwareSoftmaxEngine(Engine):
             'loss': loss.item(),
             'acc': metrics.accuracy(outputs, pids)[0].item()
         }
+        torch.nn.utils.clip_grad_value_(self.criterion.parameters(), 10)
 
         return loss_summary
